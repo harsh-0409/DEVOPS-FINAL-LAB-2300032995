@@ -1,0 +1,48 @@
+services:
+  mysqldb:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: docker
+      MYSQL_DATABASE: productdb
+    ports:
+      - "3307:3306" # host:container
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./springbootproject
+      dockerfile: backend.Dockerfile
+    image: 2300032995-FINAL-BACKEND
+    container_name: springboot
+    ports:
+      - "30032:2000"
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/coursedb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: exam
+    restart: on-failure
+
+  frontend:
+    build:
+      context: ./reactapp
+      dockerfile: frontend.Dockerfile
+    image: 2300032995-FINAL-FRONTEND
+    container_name: react
+    ports:
+      - "30032:80"
+    depends_on:
+      - backend
+    restart: on-failure
+
+volumes:
+  mysql_data:
