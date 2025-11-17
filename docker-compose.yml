@@ -5,20 +5,20 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: exam
       MYSQL_DATABASE: coursedb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: exam
     ports:
-      - "3307:3306" # host:container
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - springboot-mysql-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pexam"]
+      timeout: 20s
       retries: 10
 
   backend:
-    build:
-      context: ./springbootproject
-      dockerfile: backend.Dockerfile
     image: harshh04z/2300032995-final-backend:latest
     container_name: springboot
     ports:
@@ -26,16 +26,15 @@ services:
     depends_on:
       mysqldb:
         condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/coursedb
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: exam
     restart: on-failure
+    networks:
+      - springboot-mysql-net
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/coursedb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=exam
 
   frontend:
-    build:
-      context: ./reactapp
-      dockerfile: frontend.Dockerfile
     image: harshh04z/2300032995-final-frontend:latest
     container_name: react
     ports:
@@ -43,6 +42,11 @@ services:
     depends_on:
       - backend
     restart: on-failure
+    networks:
+      - springboot-mysql-net
 
 volumes:
   mysql_data:
+
+networks:
+  springboot-mysql-net:
