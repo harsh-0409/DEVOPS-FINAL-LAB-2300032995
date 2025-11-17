@@ -5,18 +5,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: exam
       MYSQL_DATABASE: coursedb
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: exam
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - springboot-mysql-net
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pexam"]
-      timeout: 20s
-      retries: 10
 
   backend:
     image: harshh04z/2300032995-final-backend:latest
@@ -24,15 +18,10 @@ services:
     ports:
       - "30033:2000"
     depends_on:
-      mysqldb:
-        condition: service_healthy
+      - mysqldb
     restart: on-failure
     networks:
       - springboot-mysql-net
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/coursedb
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=exam
 
   frontend:
     image: harshh04z/2300032995-final-frontend:latest
