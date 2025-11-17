@@ -19,7 +19,7 @@ services:
     build:
       context: ./springbootproject
       dockerfile: backend.Dockerfile
-    image: 2300032995-FINAL-BACKEND
+    image: 2300032995-final-backend
     container_name: springboot
     ports:
       - "30032:2000"
@@ -36,7 +36,7 @@ services:
     build:
       context: ./reactapp
       dockerfile: frontend.Dockerfile
-    image: 2300032995-FINAL-FRONTEND
+    image: 2300032995-final-frontend
     container_name: react
     ports:
       - "30032:80"
