@@ -3,8 +3,8 @@ services:
     image: mysql:8
     container_name: mysql-db
     environment:
-      MYSQL_ROOT_PASSWORD: docker
-      MYSQL_DATABASE: productdb
+      MYSQL_ROOT_PASSWORD: exam
+      MYSQL_DATABASE: coursedb
     ports:
       - "3307:3306" # host:container
     volumes:
@@ -19,10 +19,10 @@ services:
     build:
       context: ./springbootproject
       dockerfile: backend.Dockerfile
-    image: 2300032995-final-backend
+    image: harshh04z/2300032995-final-backend:latest
     container_name: springboot
     ports:
-      - "30032:2000"
+      - "30033:2000"
     depends_on:
       mysqldb:
         condition: service_healthy
@@ -36,10 +36,10 @@ services:
     build:
       context: ./reactapp
       dockerfile: frontend.Dockerfile
-    image: 2300032995-final-frontend
+    image: harshh04z/2300032995-final-frontend:latest
     container_name: react
     ports:
-      - "30032:80"
+      - "30031:80"
     depends_on:
       - backend
     restart: on-failure
